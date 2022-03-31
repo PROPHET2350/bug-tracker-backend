@@ -22,7 +22,7 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'string')]
     private string $password;
 
-    #[ORM\ManyToMany(targetEntity: Roles::class, cascade: ['persist'])]
+    #[ORM\ManyToMany(targetEntity: Roles::class, cascade: ['refresh'])]
     #[ORM\JoinTable(name: 'users_roles')]
     #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id')]
     #[ORM\InverseJoinColumn(name: 'role_id', referencedColumnName: 'id')]

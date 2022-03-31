@@ -69,4 +69,16 @@ class UserService
         $this->userRepository->add($userFinder, true);
         return [$userFinder, null];
     }
+
+    public function DeleteUser(string $id): array
+    {
+        $userFinder = $this->userRepository->find($id);
+
+        if (!$userFinder) {
+            return [null, 'User not found'];
+        }
+        $this->userRepository->remove($userFinder);
+
+        return [$userFinder, null];
+    }
 }

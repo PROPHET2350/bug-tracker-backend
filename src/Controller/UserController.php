@@ -42,6 +42,18 @@ class UserController extends AbstractController
         return new Response($this->json($user), Response::HTTP_OK);
     }
 
+    #[Route('/user/{id}', name: 'update user', methods: ['DELETE'])]
+    public function deleteAccount(string $id)
+    {
+        [$user, $error] = $this->userService->DeleteUser($id);
+
+        if ($error) {
+            return new Response($error, Response::HTTP_NOT_FOUND);
+        }
+
+        return new Response($this->json($user), Response::HTTP_OK);
+    }
+
     #[Route('/users', name: 'delete user', methods: ['GET'])]
     public function getUsers(UsersRepository $usersRepository): Response
     {
