@@ -58,4 +58,27 @@ class TeamService
         $team->updateUsers($userToAdd);
         $this->teamsRepository->add($team);
     }
+
+    public function getTeam(string $teamId): Teams
+    {
+        return $this->teamsRepository->find($teamId);
+    }
+
+    public function getAllTeams(): array
+    {
+        return $this->teamsRepository->findAll();
+    }
+
+    public function updateTeam(string $teamId, string $name): array
+    {
+        $team = $this->teamsRepository->find($teamId);
+
+        if ($team === null) {
+            return [null, 'Team not found'];
+        }
+        $team->updateTeamName($name);
+        $this->teamsRepository->add($team);
+
+        return [$team, null];
+    }
 }

@@ -36,4 +36,17 @@ class TeamController extends AbstractController
         $this->teamService->addUserToTeam($id, $request);
         return new Response("team's users modifying successfully", Response::HTTP_ACCEPTED);
     }
+
+    #[Route('/team/{id}', name: 'update team', methods: ['PUT'])]
+    public function updateTeam(string $id, Request $request): Response
+    {
+        $content = json_decode($request->getContent(), true);
+        [$team, $error] = $this->teamService->updateTeam($id, $content['name']);
+
+        if ($error != null) {
+            return new Response($error, Response::HTTP_BAD_REQUEST);
+        }
+
+        return new Response($this->json($team), Response::HTTP_OK);
+    }
 }

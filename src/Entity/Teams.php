@@ -91,4 +91,9 @@ class Teams
             }
         }
     }
+
+    public function updateTeamName($name): void
+    {
+        $this->name = $name;
+    }
 }
