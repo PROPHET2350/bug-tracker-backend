@@ -49,4 +49,25 @@ class TeamController extends AbstractController
 
         return new Response($this->json($team), Response::HTTP_OK);
     }
+
+    #[Route('/team/{id}', name: 'delete team', methods: ['DELETE'])]
+    public function deleteTeam(string $id): Response
+    {
+        $this->teamService->deleteTeam($id);
+        return new Response("team deleted successfully", Response::HTTP_ACCEPTED);
+    }
+
+    #[Route('/team/{id}', name: 'get team', methods: ['GET'])]
+    public function getTeam(string $id): Response
+    {
+        $team = $this->teamService->getTeam($id);
+        return new Response($this->json($team), Response::HTTP_OK);
+    }
+
+    #[Route('/teams', name: 'get all teams', methods: ['GET'])]
+    public function getAllTeams(): Response
+    {
+        $teams = $this->teamService->getAllTeams();
+        return new Response($this->json($teams), Response::HTTP_OK);
+    }
 }

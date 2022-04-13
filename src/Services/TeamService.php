@@ -81,4 +81,14 @@ class TeamService
 
         return [$team, null];
     }
+
+    public function deleteTeam(string $teamId): void
+    {
+        $team = $this->teamsRepository->find($teamId);
+
+        if ($team === null) {
+            return;
+        }
+        $this->teamsRepository->remove($team);
+    }
 }
