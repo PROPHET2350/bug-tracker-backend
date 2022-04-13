@@ -8,6 +8,7 @@ use App\Form\Type\ProjectType;
 use App\Repository\ProjectRepository;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\VarDumper\VarDumper;
 
 class ProjectService
 {
@@ -22,12 +23,18 @@ class ProjectService
     {
         $ProjectDTO = new ProjectDTO();
         $form = $this->formFactory->create(ProjectType::class, $ProjectDTO);
-        $form->handleRequest($request);
+        $content = json_decode($request->getContent(), true);
+        $form->submit($content);
 
-        if (!$form->isSubmitted() && !$form->isValid()) {
-            return [null, 'invalid form submitted'];
+        if (!$form->isSubmitted()) {
+            return [null, 'Form is not submitted'];
         }
-        $project = new Project($ProjectDTO->getId(), $ProjectDTO->getName());
+
+        if (!$form->isValid()) {
+            return [null, 'Form is not valid'];
+        }
+
+        $project = new Project($ProjectDTO->id, $ProjectDTO->name);
         $this->projectRepository->save($project, true);
         return [$project, null];
     }

@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use App\Repository\TicketsRepository;
 use DateTimeInterface;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: TicketsRepository::class)]
@@ -35,6 +37,10 @@ class Tickets
     #[ORM\JoinColumn(nullable: false, name: 'project_id')]
     private Project $project;
 
+    #[ORM\ManyToOne(targetEntity: Users::class, cascade: ['refresh'])]
+    #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id')]
+    private Users $user;
+
     public function __construct(
         string $id,
         string $name,
@@ -43,7 +49,8 @@ class Tickets
         string $state,
         DateTimeInterface $date,
         string $priority,
-        Project $project
+        Project $project,
+        Users $user
     ) {
         $this->id = $id;
         $this->name = $name;
@@ -53,9 +60,10 @@ class Tickets
         $this->date = $date;
         $this->priority = $priority;
         $this->project = $project;
+        $this->user = $user;
     }
 
-    public function getId(): ?int
+    public function getId(): ?string
     {
         return $this->id;
     }
@@ -93,5 +101,26 @@ class Tickets
     public function getProject(): ?Project
     {
         return $this->project;
+    }
+
+    public function getUser(): ?Users
+    {
+        return $this->user;
+    }
+
+    public function getEscensialInformations(): array
+    {
+        $EscensialInformations = array();
+        $EscensialInformations['id'] = $this->id;
+        $EscensialInformations['name'] = $this->name;
+        $EscensialInformations['description'] = $this->description;
+        $EscensialInformations['type'] = $this->type;
+        $EscensialInformations['state'] = $this->state;
+        $EscensialInformations['date'] = $this->date;
+        $EscensialInformations['priority'] = $this->priority;
+        $EscensialInformations['project'] = $this->project->getName();
+        $EscensialInformations['user'] = $this->user->getUsername();
+
+        return $EscensialInformations;
     }
 }
