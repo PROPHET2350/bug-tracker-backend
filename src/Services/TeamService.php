@@ -3,15 +3,12 @@
 namespace App\Services;
 
 use App\Entity\Teams;
-use App\Entity\Users;
 use App\Form\Model\TeamDTO;
 use App\Form\Type\TeamFormType;
 use App\Repository\TeamsRepository;
 use App\Repository\UsersRepository;
-use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\VarDumper\VarDumper;
 
 class TeamService
 {

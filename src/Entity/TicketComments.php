@@ -24,15 +24,15 @@ class TicketComments
 
     #[ORM\ManyToOne(targetEntity: Tickets::class)]
     #[ORM\JoinColumn(nullable: false, name: 'ticket_id')]
-    private Tickets $Ticket;
+    private Tickets $ticket;
 
-    public function __construct(string $id, string $name, string $description, Users $author, Tickets $Ticket)
+    public function __construct(string $id, string $name, string $description, Users $author, Tickets $ticket)
     {
         $this->id = $id;
         $this->name = $name;
         $this->description = $description;
         $this->author = $author;
-        $this->Ticket = $Ticket;
+        $this->ticket = $ticket;
     }
 
     public function getId(): ?string
@@ -57,6 +57,6 @@ class TicketComments
 
     public function getTicket(): ?Tickets
     {
-        return $this->Ticket;
+        return $this->ticket;
     }
 }
