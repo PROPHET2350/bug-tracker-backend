@@ -11,12 +11,12 @@ class ProjectDTORequest implements RequestDTORepository
     /**
      * @Assert\NotBlank()
      */
-    public $id;
+    private $id;
     /**
      * @Assert\NotBlank()
      * @Assert\Length(min=2)
      */
-    public $name;
+    private $name;
 
     public function __construct(Request $request)
     {

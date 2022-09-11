@@ -15,59 +15,25 @@ class UserService
 {
     public function __construct(
         private UsersRepository $userRepository,
-        private FormFactoryInterface $formFactory,
-        private UserPasswordHasherInterface $passwordHasher,
-        private RolesRepository $rolesRepository
     ) {
     }
 
-    public function AddUser(Request $request): array
+    public function AddUser(Users $user): void
     {
-        $UserDTO = new UsersDTO();
-        $form = $this->formFactory->create(UserFormType::class, $UserDTO);
-        $form->submit(json_decode($request->getContent(), true));
-
-        if (!$form->isSubmitted()) {
-            return [null, 'Form is not submitted'];
-        }
-
-        $HashPassword = $this->passwordHasher->hashPassword($UserDTO, $UserDTO->getPassword());
-        $UserDTO->password = $HashPassword;
-        $RoleTrueEntity = [];
-        foreach ($UserDTO->roles as $key) {
-            $RoleTrueEntity[] = $this->rolesRepository->find($key->id);
-        }
-        $UserDTO->roles = $RoleTrueEntity;
-        $user = new Users($UserDTO->id, $UserDTO->username, $UserDTO->password, $UserDTO->roles);
         $this->userRepository->add($user);
-        return [$user, null];
     }
 
-    public function UpdateUser(Request $request, string $id): array
+    public function UpdateUser(Users $userWithUpdatedRoles, string $id): Users
     {
-        $userFinder = $this->userRepository->find($id);
+        $userToUpdate = $this->userRepository->find($id);
 
-        $UserDTO = new UsersDTO();
-        $form = $this->formFactory->create(UserFormType::class, $UserDTO);
-        $form->submit(json_decode($request->getContent(), true));
-
-        if (!$form->isSubmitted()) {
-            return [null, 'Form is not submitted'];
-        }
-
-        if (!$form->isValid()) {
-            return [null, 'Form is not valid'];
-        }
-        $RoleTrueEntity = [];
-        foreach ($UserDTO->roles as $key) {
-            $RoleTrueEntity[] = $this->rolesRepository->find($key->id);
-        }
-        $UserDTO->roles = $RoleTrueEntity;
-        $HashPassword = $this->passwordHasher->hashPassword($UserDTO, $UserDTO->getPassword());
-        $UserDTO->password = $HashPassword;
-        $userFinder->update($UserDTO->username, $UserDTO->password, $UserDTO->roles);
-        $this->userRepository->add($userFinder, true);
-        return [$userFinder, null];
+        $userToUpdate->update(
+            $userWithUpdatedRoles->getUsername(),
+            $userWithUpdatedRoles->getPassword(),
+            $userWithUpdatedRoles->getRole()->toArray()
+        );
+        $this->userRepository->add($userToUpdate, true);
+        return $userToUpdate;
     }
 
     public function DeleteUser(string $id): array
