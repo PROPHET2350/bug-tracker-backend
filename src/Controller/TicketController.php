@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Tickets;
 use App\Services\TicketService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
