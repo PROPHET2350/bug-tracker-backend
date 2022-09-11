@@ -15,17 +15,5 @@ class ProjectTest extends WebTestCase
 
     public function testProjectCreation()
     {
-        $client = static::createClient();
-        $project = [
-            'id' => '1',
-            'name' => 'luis fonsi'
-        ];
-        $client->request('POST', '/project/add', [], [], [], json_encode($project));
-        $this->assertResponseIsSuccessful();
-        if (json_decode($client->getResponse()->getContent())->project == $project) {
-            var_dump("ok");
-        } else {
-            var_dump("bad");
-        }
     }
 }
