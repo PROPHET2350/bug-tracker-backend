@@ -3,12 +3,9 @@
 namespace App\Services;
 
 use App\Entity\Teams;
-use App\Form\Model\TeamDTO;
-use App\Form\Type\TeamFormType;
 use App\Repository\TeamsRepository;
 use App\Repository\UsersRepository;
 use Symfony\Component\Form\FormFactoryInterface;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 
 class TeamService
