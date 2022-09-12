@@ -2,7 +2,7 @@
 
 namespace App\ArgumentResolver\Model;
 
-use App\Form\RequestDTORepository;
+use App\ArgumentResolver\RequestDTORepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Validator\Constraints as Assert;
 

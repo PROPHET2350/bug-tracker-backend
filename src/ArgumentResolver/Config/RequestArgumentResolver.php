@@ -2,7 +2,7 @@
 
 namespace App\ArgumentResolver\Config;
 
-use App\Form\RequestDTORepository;
+use App\ArgumentResolver\RequestDTORepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Controller\ArgumentValueResolverInterface;
 use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;

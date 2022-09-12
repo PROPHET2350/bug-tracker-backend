@@ -2,16 +2,14 @@
 
 namespace App\ArgumentResolver\Model;
 
-use App\Form\RequestDTORepository;
+use App\ArgumentResolver\RequestDTORepository;
 use App\Repository\RolesRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use App\Entity\Users;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasher;
 
 class UserDTORequest implements RequestDTORepository,  PasswordAuthenticatedUserInterface
 {

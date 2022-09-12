@@ -9,6 +9,7 @@ use App\Repository\TeamsRepository;
 use App\Repository\UsersRepository;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 
 class TeamService
 {
@@ -19,41 +20,26 @@ class TeamService
     ) {
     }
 
-    public function addTeam(Request $request): array
+    public function addTeam(Teams $team): void
     {
-        $teamDTO = new TeamDTO();
-        $form = $this->formFactoryInterface->create(TeamFormType::class, $teamDTO);
-        $form->submit(json_decode($request->getContent(), true));
-
-        if (!$form->isSubmitted()) {
-            return [null, 'Form is not submitted'];
-        }
-
-        if (!$form->isValid()) {
-            return [null, 'Form is not valid'];
-        }
-        $userInTeam = [];
-        foreach ($teamDTO->users as $key) {
-            $userInTeam[] = $this->usersRepository->find($key->id);
-        }
-        $teamDTO->users = $userInTeam;
-        $team = new Teams($teamDTO->id, $teamDTO->name, $teamDTO->users);
         $this->teamsRepository->add($team);
-        return [$team, null];
     }
 
-    public function addUserToTeam(string $teamId, Request $request): void
+    public function addUserToTeam(string $teamId, array $usersIds): mixed
     {
         $userToAdd = [];
         $team = $this->teamsRepository->find($teamId);
-        $content = json_decode($request->getContent(), true);
 
-        for ($i = 0; $i < count($content); $i++) {
-            $userToAdd[] = $this->usersRepository->find($content[$i]['id']);
+        foreach ($usersIds as $id) {
+            $user = $this->usersRepository->find($id);
+            if (!$user) {
+                return new BadRequestException("User with ID {$id} not found");
+            }
+            array_push($userToAdd, $user);
         }
-
         $team->updateUsers($userToAdd);
         $this->teamsRepository->add($team);
+        return $team;
     }
 
     public function getTeam(string $teamId): Teams

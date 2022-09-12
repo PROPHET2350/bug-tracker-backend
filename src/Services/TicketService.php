@@ -10,7 +10,6 @@ use App\Repository\TicketsRepository;
 use App\Repository\UsersRepository;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\VarDumper\VarDumper;
 
 class TicketService
 {
