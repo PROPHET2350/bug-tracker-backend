@@ -5,7 +5,6 @@ namespace App\Services;
 use App\Entity\Teams;
 use App\Repository\TeamsRepository;
 use App\Repository\UsersRepository;
-use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 
 class TeamService
@@ -13,7 +12,6 @@ class TeamService
     public function __construct(
         private TeamsRepository $teamsRepository,
         private UsersRepository $usersRepository,
-        private FormFactoryInterface $formFactoryInterface
     ) {
     }
 
