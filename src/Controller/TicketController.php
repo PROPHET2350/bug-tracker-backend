@@ -2,9 +2,11 @@
 
 namespace App\Controller;
 
+use App\ArgumentResolver\Model\TicketDTORequest;
+use App\Repository\ProjectRepository;
+use App\Repository\UsersRepository;
 use App\Services\TicketService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -16,19 +18,14 @@ class TicketController extends AbstractController
     }
 
     #[Route('/ticket/add', name: 'add ticket', methods: ['POST'])]
-    public function addTicket(Request $request): Response
-    {
-        [$ticket, $error] = $this->ticketService->addTicket($request);
-
-        if ($error) {
-            return $this->json([
-                'error' => $error,
-            ], Response::HTTP_BAD_REQUEST);
-        }
-
-        return $this->json([
-            'ticket' => $ticket,
-        ], Response::HTTP_CREATED);
+    public function addTicket(
+        TicketDTORequest $ticketDtoRequest,
+        UsersRepository $usersRepository,
+        ProjectRepository $projectRepository
+    ): Response {
+        $ticket = $ticketDtoRequest->createTicketFromTicketDTORequest($usersRepository, $projectRepository);
+        $this->ticketService->addTicket($ticket);
+        return new Response($this->json($ticket), Response::HTTP_CREATED);
     }
 
     #[Route('/ticket/{id}', name: 'get ticket', methods: ['GET'])]
@@ -50,9 +47,6 @@ class TicketController extends AbstractController
     #[Route('/tickets', name: 'get all tickets', methods: ['GET'])]
     public function getAllTickets(): Response
     {
-        /**
-         * @var Tickets
-         */
         $tickets = $this->ticketService->getAllTickets();
         $res = [];
 

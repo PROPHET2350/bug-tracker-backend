@@ -2,16 +2,31 @@
 
 namespace App\Services;
 
+use App\Entity\TicketComments;
 use App\Repository\TicketCommentsRepository;
-use App\Repository\TicketsRepository;
-use App\Repository\UsersRepository;
 
 class TicketCommentService
 {
     public function __construct(
         private TicketCommentsRepository $ticketCommentsRepository,
-        private TicketsRepository $ticketRepository,
-        private UsersRepository $userRepository
     ) {
+    }
+
+    public function createTicketsComment(TicketComments $ticketComments)
+    {
+        $this->ticketCommentsRepository->add($ticketComments);
+    }
+
+    public function getAllCommentsByTicketId(string $ticketId): array
+    {
+        $comments = $this->ticketCommentsRepository->findBy(
+            ['ticket' => $ticketId]
+        );
+
+        if (!$comments) {
+            return [null, "Comment in tickets with id {$ticketId} does not found"];
+        }
+
+        return [$comments, null];
     }
 }

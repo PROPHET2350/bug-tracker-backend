@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use App\ArgumentResolver\Model\TeamDTORequest;
+use App\Repository\UsersRepository;
 use App\Services\TeamService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -19,22 +21,18 @@ class TeamController extends AbstractController
     }
 
     #[Route('/team/add', name: 'add team', methods: ['POST'])]
-    public function createTeam(Request $request): Response
+    public function createTeam(TeamDTORequest $teamDtoRequest, UsersRepository $usersRepository): Response
     {
-        [$team, $error] = $this->teamService->addTeam($request);
-
-        if ($error != null) {
-            return new Response($error, Response::HTTP_BAD_REQUEST);
-        }
-
+        $team = $teamDtoRequest->findUsersFromTeamDTORequest($usersRepository);
+        $this->teamService->addTeam($team);
         return new Response($this->json($team), Response::HTTP_CREATED);
     }
 
     #[Route('/team/{id}/add-user', name: 'add user to team', methods: ['POST'])]
     public function addUserToTeam(string $id, Request $request): Response
     {
-        $this->teamService->addUserToTeam($id, $request);
-        return new Response("team's users modifying successfully", Response::HTTP_ACCEPTED);
+        $team = $this->teamService->addUserToTeam($id, json_decode($request->getContent(), true)["users"]);
+        return new Response($this->json($team), Response::HTTP_ACCEPTED);
     }
 
     #[Route('/team/{id}', name: 'update team', methods: ['PUT'])]

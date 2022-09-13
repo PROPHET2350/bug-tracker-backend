@@ -14,7 +14,7 @@ class Roles
     private $id;
 
     #[ORM\Column(type: 'string', length: 255)]
-    private $name;
+    private string $name;
 
     public function __construct($id, $name)
     {
