@@ -17,6 +17,10 @@ class UserService
         $this->userRepository->add($user);
     }
 
+    public function findByUsername(string $username): Users
+    {
+        return $this->userRepository->findOneBy(['username' => $username]);
+    }
     public function UpdateUser(Users $userWithUpdatedRoles, string $id): Users
     {
         $userToUpdate = $this->userRepository->find($id);
