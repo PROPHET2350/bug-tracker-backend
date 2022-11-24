@@ -25,14 +25,14 @@ class TeamController extends AbstractController
     {
         $team = $teamDtoRequest->findUsersFromTeamDTORequest($usersRepository);
         $this->teamService->addTeam($team);
-        return new Response($this->json($team), Response::HTTP_CREATED);
+        return $this->json($team, Response::HTTP_CREATED);
     }
 
     #[Route('/team/{id}/add-user', name: 'add user to team', methods: ['POST'])]
     public function addUserToTeam(string $id, Request $request): Response
     {
         $team = $this->teamService->addUserToTeam($id, json_decode($request->getContent(), true)["users"]);
-        return new Response($this->json($team), Response::HTTP_ACCEPTED);
+        return $this->json($team, Response::HTTP_ACCEPTED);
     }
 
     #[Route('/team/{id}', name: 'update team', methods: ['PUT'])]
@@ -42,30 +42,30 @@ class TeamController extends AbstractController
         [$team, $error] = $this->teamService->updateTeam($id, $content['name']);
 
         if ($error != null) {
-            return new Response($error, Response::HTTP_BAD_REQUEST);
+            return $this->json($error, Response::HTTP_BAD_REQUEST);
         }
 
-        return new Response($this->json($team), Response::HTTP_OK);
+        return $this->json($team, Response::HTTP_OK);
     }
 
     #[Route('/team/{id}', name: 'delete team', methods: ['DELETE'])]
     public function deleteTeam(string $id): Response
     {
         $this->teamService->deleteTeam($id);
-        return new Response("team deleted successfully", Response::HTTP_ACCEPTED);
+        return $this->json("team deleted successfully", Response::HTTP_ACCEPTED);
     }
 
     #[Route('/team/{id}', name: 'get team', methods: ['GET'])]
     public function getTeam(string $id): Response
     {
         $team = $this->teamService->getTeam($id);
-        return new Response($this->json($team), Response::HTTP_OK);
+        return $this->json($team, Response::HTTP_OK);
     }
 
     #[Route('/teams', name: 'get all teams', methods: ['GET'])]
     public function getAllTeams(): Response
     {
         $teams = $this->teamService->getAllTeams();
-        return new Response($this->json($teams), Response::HTTP_OK);
+        return $this->json($teams, Response::HTTP_OK);
     }
 }

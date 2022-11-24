@@ -52,6 +52,10 @@ class TicketDTORequest implements RequestDTORepository
      * @Assert\NotBlank()
      */
     private $user;
+    /**
+     * @Assert\NotBlank()
+     */
+    private $users;
 
     public function __construct(Request $request)
     {
@@ -66,6 +70,7 @@ class TicketDTORequest implements RequestDTORepository
         $this->priority = $data["priority"] ?? null;
         $this->project = $data["project"] ?? null;
         $this->user = $data["user"] ?? null;
+        $this->users = $data["users"] ?? null;
     }
 
     /**
@@ -84,6 +89,15 @@ class TicketDTORequest implements RequestDTORepository
         if (!$project) {
             return new BadRequestException("Project with id {$this->project} does not exist");
         }
+
+        $usersFind = [];
+        foreach ($this->users as $u) {
+            if (!$usersRepository->find($u)) {
+                throw new BadRequestException("User with id {$u} not found");
+            }
+            array_push($usersFind, $usersRepository->find($u));
+        }
+
         $date = new DateTime();
         $date->format("Y-m-d H:i:s");
 
@@ -96,7 +110,8 @@ class TicketDTORequest implements RequestDTORepository
             $date,
             $this->priority,
             $project,
-            $user
+            $user,
+            $usersFind
         );
         return $ticket;
     }

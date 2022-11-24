@@ -28,7 +28,7 @@ class TicketCommentController extends AbstractController
             $ticketsRepository
         );
         $this->ticketCommentService->createTicketsComment($ticketsComment);
-        return new Response($this->json($ticketsComment), Response::HTTP_CREATED);
+        return $this->json($ticketsComment);
     }
 
     #[Route('/ticket-comment/ticket/{id}', name: 'get comments', methods: ['GET'])]
@@ -37,8 +37,14 @@ class TicketCommentController extends AbstractController
         [$comment, $error] = $this->ticketCommentService->getAllCommentsByTicketId($id);
 
         if ($error) {
-            return new Response($this->json($error), Response::HTTP_BAD_REQUEST);
+            return $this->json('');
         }
-        return new Response($this->json($comment), Response::HTTP_OK);
+        $commentsEscensialInformations = [];
+
+        foreach ($comment as $value) {
+            array_push($commentsEscensialInformations, $value->getEscensialInformations());
+        }
+
+        return $this->json($commentsEscensialInformations);
     }
 }

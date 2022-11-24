@@ -17,13 +17,16 @@ class UserService
         $this->userRepository->add($user);
     }
 
+    public function findByUsername(string $username): Users
+    {
+        return $this->userRepository->findOneBy(['username' => $username]);
+    }
     public function UpdateUser(Users $userWithUpdatedRoles, string $id): Users
     {
         $userToUpdate = $this->userRepository->find($id);
 
         $userToUpdate->update(
             $userWithUpdatedRoles->getUsername(),
-            $userWithUpdatedRoles->getPassword(),
             $userWithUpdatedRoles->getRole()->toArray()
         );
         $this->userRepository->add($userToUpdate, true);
@@ -40,5 +43,14 @@ class UserService
         $this->userRepository->remove($userFinder);
 
         return [$userFinder, null];
+    }
+
+    public function UpdatePassword(string $id, string $password)
+    {
+        $user = $this->userRepository->find($id);
+        $user->resetPassword($password);
+        $this->userRepository->add($user, true);
+
+        return $user;
     }
 }

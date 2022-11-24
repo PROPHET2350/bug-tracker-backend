@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Entity\Teams;
+use App\Entity\Users;
 use App\Repository\TeamsRepository;
 use App\Repository\UsersRepository;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
@@ -20,6 +21,21 @@ class TeamService
         $this->teamsRepository->add($team);
     }
 
+    public function findTeamsByUser(Users $user): array
+    {
+        $teams = $this->teamsRepository->findAll();
+        $t = [];
+        foreach ($teams as $team) {
+            if ($team->getUsers()->contains($user)) {
+                array_push($t, $team);
+            }
+        }
+        $userTeams = [];
+        foreach ($t as $team) {
+            array_push($userTeams, array('id' => $team->getId(), 'name' => $team->getName()));
+        }
+        return $userTeams;
+    }
     public function addUserToTeam(string $teamId, array $usersIds): mixed
     {
         $userToAdd = [];

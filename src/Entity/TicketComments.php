@@ -18,12 +18,12 @@ class TicketComments
     #[ORM\Column(type: 'string', length: 255)]
     private string $description;
 
-    #[ORM\ManyToOne(targetEntity: Users::class, inversedBy: 'ticketComments')]
-    #[ORM\JoinColumn(nullable: false, name: 'user_id')]
+    #[ORM\ManyToOne(targetEntity: Users::class, cascade: ['all'])]
+    #[ORM\JoinColumn(nullable: false, name: 'user_id', onDelete: 'CASCADE')]
     private Users $author;
 
-    #[ORM\ManyToOne(targetEntity: Tickets::class)]
-    #[ORM\JoinColumn(nullable: false, name: 'ticket_id')]
+    #[ORM\ManyToOne(targetEntity: Tickets::class, cascade: ['all'])]
+    #[ORM\JoinColumn(nullable: false, name: 'ticket_id', onDelete: 'CASCADE')]
     private Tickets $ticket;
 
     public function __construct(string $id, string $name, string $description, Users $author, Tickets $ticket)
@@ -58,5 +58,15 @@ class TicketComments
     public function getTicket(): ?Tickets
     {
         return $this->ticket;
+    }
+
+    public function getEscensialInformations(): array
+    {
+        $EscensialInformations = array();
+        $EscensialInformations['id'] = $this->id;
+        $EscensialInformations['name'] = $this->name;
+        $EscensialInformations['description'] = $this->description;
+        $EscensialInformations['author'] = $this->author->getUsername();
+        return $EscensialInformations;
     }
 }

@@ -9,6 +9,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Repository\RolesRepository;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class UserController extends AbstractController
@@ -28,7 +29,7 @@ class UserController extends AbstractController
     ): Response {
         $user = $userDTO->UserConstructorFromUserDTORequest($rolesRepository, $passwordHasher);
         $this->userService->AddUser($user);
-        return new Response($this->json($user), Response::HTTP_CREATED);
+        return $this->json($user, Response::HTTP_OK);
     }
 
     #[Route('/user/{id}', name: 'update user', methods: ['PUT'])]
@@ -40,7 +41,7 @@ class UserController extends AbstractController
     ) {
         $newUser = $userDTO->UserConstructorFromUserDTORequest($rolesRepository, $passwordHasher);
         $updatedUser = $this->userService->UpdateUser($newUser, $id);
-        return new Response($this->json($updatedUser), Response::HTTP_OK);
+        return $this->json($updatedUser, Response::HTTP_OK);
     }
 
     #[Route('/user/{id}', name: 'delete user', methods: ['DELETE'])]
@@ -49,16 +50,45 @@ class UserController extends AbstractController
         [$user, $error] = $this->userService->DeleteUser($id);
 
         if ($error) {
-            return new Response($error, Response::HTTP_NOT_FOUND);
+            return $this->json($error, Response::HTTP_BAD_REQUEST);
         }
 
-        return new Response($this->json($user), Response::HTTP_OK);
+        return $this->json($user, Response::HTTP_OK);
     }
 
     #[Route('/users', name: 'get all users', methods: ['GET'])]
     public function getUsers(UsersRepository $usersRepository): Response
     {
         $users = $usersRepository->findAll();
-        return new Response($this->json($users), Response::HTTP_OK);
+        $usersResponse = [];
+
+        foreach ($users as $user) {
+            array_push($usersResponse, $user->getEscensialInformations());
+        }
+
+        return $this->json($usersResponse, Response::HTTP_OK);
+    }
+    #[Route('/user/{id}', name: 'get one user', methods: ['GET'])]
+    public function getUserById(UsersRepository $usersRepository, string $id): Response
+    {
+        $users = $usersRepository->find($id);
+
+        return $this->json($users, Response::HTTP_OK);
+    }
+
+    #[Route('/user-reset/{id}', name: 'update user password', methods: ['PUT'])]
+    public function updatePassword(
+        Request $request,
+        UserPasswordHasherInterface $passwordHasher,
+        UsersRepository $usersRepository,
+        string $id
+    ) {
+        $password = $request->toArray();
+        $hashedPassword = $passwordHasher->hashPassword(
+            $usersRepository->find($id),
+            $password['password']
+        );
+        $updatedUser = $this->userService->UpdatePassword($id, $hashedPassword);
+        return $this->json($updatedUser, Response::HTTP_OK);
     }
 }
