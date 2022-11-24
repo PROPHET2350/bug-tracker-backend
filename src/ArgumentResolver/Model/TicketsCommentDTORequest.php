@@ -25,7 +25,6 @@ class TicketsCommentDTORequest implements RequestDTORepository
     private $name;
     /**
      * @Assert\NotBlank()
-     * @Assert\Length(min=10)
      */
     private $description;
     /**

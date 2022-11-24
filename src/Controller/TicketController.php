@@ -25,7 +25,19 @@ class TicketController extends AbstractController
     ): Response {
         $ticket = $ticketDtoRequest->createTicketFromTicketDTORequest($usersRepository, $projectRepository);
         $this->ticketService->addTicket($ticket);
-        return new Response($this->json($ticket), Response::HTTP_CREATED);
+        return $this->json($ticket->getEscensialInformations());
+    }
+
+    #[Route('/ticket/{id}', name: 'update ticket', methods: ['PUT'])]
+    public function updateTicket(
+        TicketDTORequest $ticketDtoRequest,
+        UsersRepository $usersRepository,
+        ProjectRepository $projectRepository,
+        string $id
+    ): Response {
+        $ticketToUpdate = $ticketDtoRequest->createTicketFromTicketDTORequest($usersRepository, $projectRepository);
+        $ticket = $this->ticketService->updateTicket($ticketToUpdate, $id);
+        return $this->json($ticket->getEscensialInformations());
     }
 
     #[Route('/ticket/{id}', name: 'get ticket', methods: ['GET'])]
@@ -39,9 +51,26 @@ class TicketController extends AbstractController
             ], Response::HTTP_BAD_REQUEST);
         }
 
-        return $this->json([
-            'ticket' => $ticket->getEscensialInformations(),
-        ], Response::HTTP_OK);
+        return $this->json(
+            $ticket->getEscensialInformations(),
+            Response::HTTP_OK
+        );
+    }
+    #[Route('/real-ticket/{id}', name: 'get Real ticket', methods: ['GET'])]
+    public function getRealTicketById(string $id): Response
+    {
+        $ticket = $this->ticketService->getTicketById($id);
+
+        if (!$ticket) {
+            return $this->json([
+                'error' => 'Ticket not found',
+            ], Response::HTTP_BAD_REQUEST);
+        }
+
+        return $this->json(
+            $ticket->getInformations(),
+            Response::HTTP_OK
+        );
     }
 
     #[Route('/tickets', name: 'get all tickets', methods: ['GET'])]
@@ -56,5 +85,22 @@ class TicketController extends AbstractController
         return $this->json([
             'tickets' => $res,
         ], Response::HTTP_OK);
+    }
+    #[Route('/tickets/{id}', name: 'get all tickets in a team', methods: ['GET'])]
+    public function getAllTicketsInATeam(string $id)
+    {
+        $tickets =  $this->ticketService->getTicketsByProjectId($id);
+        $res = [];
+
+        foreach ($tickets as $ticket) {
+            $res[] = $ticket->getEscensialInformations();
+        }
+        return $this->json($res);
+    }
+    #[Route('/ticket/{id}', name: 'delete ticket', methods: ['DELETE'])]
+    public function deleteTicket(string $id)
+    {
+        $tickets =  $this->ticketService->deleteTicket($id);
+        return $this->json($tickets);
     }
 }

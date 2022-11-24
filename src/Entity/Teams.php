@@ -19,8 +19,8 @@ class Teams
 
     #[ORM\ManyToMany(targetEntity: Users::class, cascade: ['refresh'])]
     #[ORM\JoinTable(name: 'teams_users')]
-    #[ORM\JoinColumn(name: 'team_id', referencedColumnName: 'id')]
-    #[ORM\InverseJoinColumn(name: 'user_id', referencedColumnName: 'id')]
+    #[ORM\JoinColumn(name: 'team_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    #[ORM\InverseJoinColumn(name: 'user_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
     /**
      * @var Collection<Users->getId(), Users>
      */

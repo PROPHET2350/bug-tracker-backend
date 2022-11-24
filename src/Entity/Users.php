@@ -24,8 +24,8 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\ManyToMany(targetEntity: Roles::class, cascade: ['refresh'])]
     #[ORM\JoinTable(name: 'users_roles')]
-    #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id')]
-    #[ORM\InverseJoinColumn(name: 'role_id', referencedColumnName: 'id')]
+    #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    #[ORM\InverseJoinColumn(name: 'role_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
     /**
      * @var Collection<string,Roles>
      */
@@ -146,10 +146,27 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
      * @return void
      */
 
-    public function update(string $username, string $password, array $role)
+    public function update(string $username, array $role)
     {
         $this->username = $username;
-        $this->password = $password;
         $this->updateCategories($role);
+    }
+
+    public function getEscensialInformations()
+    {
+        $users = [];
+
+        $users['id'] = $this->id;
+        $users['username'] = $this->username;
+        $users['roles'] = [];
+
+        foreach ($this->roles as $rol) {
+            array_push($users['roles'], array($rol->getId()));
+        }
+        return $users;
+    }
+    public function resetPassword(string $password)
+    {
+        $this->password = $password;
     }
 }

@@ -2,7 +2,7 @@
 
 namespace App\Listener;
 
-use App\Services\TeamService;
+use App\Services\ProjectService;
 use App\Services\UserService;
 use Lexik\Bundle\JWTAuthenticationBundle\Event\AuthenticationSuccessEvent;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -11,8 +11,8 @@ class pushUserInLogin
 {
     private RequestStack $RequestStack;
     private UserService $UserService;
-    private TeamService $TeamService;
-    public function __construct(RequestStack $RequestStack, UserService $UserService, TeamService $TeamService)
+    private ProjectService $TeamService;
+    public function __construct(RequestStack $RequestStack, UserService $UserService, ProjectService $TeamService)
     {
         $this->RequestStack = $RequestStack;
         $this->UserService = $UserService;
@@ -23,8 +23,9 @@ class pushUserInLogin
         $data = $AuthenticationSuccessEvent->getData();
         $username = json_decode($this->RequestStack->getCurrentRequest()->getContent())->username;
         $user = $this->UserService->findByUsername($username);
-        $teams = $this->TeamService->findTeamsByUser($user);
+        $teams = $this->TeamService->findProjectsByUser($user);
         $userResponse = [
+            'id' => $user->getId(),
             'username' => $user->getUsername(),
             'roles' => $user->getRoles(),
             'teams' => $teams

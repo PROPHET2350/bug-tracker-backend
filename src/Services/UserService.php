@@ -27,7 +27,6 @@ class UserService
 
         $userToUpdate->update(
             $userWithUpdatedRoles->getUsername(),
-            $userWithUpdatedRoles->getPassword(),
             $userWithUpdatedRoles->getRole()->toArray()
         );
         $this->userRepository->add($userToUpdate, true);
@@ -44,5 +43,14 @@ class UserService
         $this->userRepository->remove($userFinder);
 
         return [$userFinder, null];
+    }
+
+    public function UpdatePassword(string $id, string $password)
+    {
+        $user = $this->userRepository->find($id);
+        $user->resetPassword($password);
+        $this->userRepository->add($user, true);
+
+        return $user;
     }
 }
