@@ -1,14 +1,14 @@
-Requirements
+## Requirements
 
 -PHP 8.1.2
 
 -Mysql 8.1.2
 
-Configuration
+## Configuration
 
 -change DATABASE_URL variable in .env file
 
-Instalation
+## Instalation
 
 1-composer install 
 
