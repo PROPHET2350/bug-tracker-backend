@@ -9,7 +9,6 @@ use Doctrine\ORM\Mapping as ORM;
 class Roles
 {
     #[ORM\Id]
-    #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
     private $id;
 
