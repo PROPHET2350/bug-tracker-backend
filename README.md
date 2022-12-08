@@ -6,7 +6,7 @@ Requirements
 
 Configuration
 
-change DATABASE_URL variable in .env file
+-change DATABASE_URL variable in .env file
 
 Instalation
 
